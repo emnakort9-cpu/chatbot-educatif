@@ -3,7 +3,6 @@ import random
 
 app = Flask(__name__)
 
-# قاعدة أسئلة حسب المجال
 exercices = {
     "math": [
         "Calcule: 12 × 8",
@@ -22,26 +21,43 @@ exercices = {
     ]
 }
 
+history = []
+
 @app.route("/")
 def home():
     return render_template("index.html")
 
 @app.route("/chat", methods=["POST"])
 def chat():
-    user_message = request.json.get("message", "").lower()
+    try:
+        user_message = request.json.get("message", "").lower().strip()
 
-    if "math" in user_message:
-        reply = random.choice(exercices["math"])
-    elif "info" in user_message:
-        reply = random.choice(exercices["informatique"])
-    elif "reseau" in user_message:
-        reply = random.choice(exercices["reseau"])
-    elif "bonjour" in user_message or "salut" in user_message:
-        reply = "👋 Bonjour ! Choisis un domaine: math, informatique, réseau."
-    else:
-        reply = "❓ Écris un domaine: math / informatique / réseau"
+        if not user_message:
+            return jsonify({"reply": "❓ Message vide !"})
 
-    return jsonify({"reply": reply})
+        if "math" in user_message:
+            reply = random.choice(exercices["math"])
+
+        elif "info" in user_message:
+            reply = random.choice(exercices["informatique"])
+
+        elif "reseau" in user_message:
+            reply = random.choice(exercices["reseau"])
+
+        elif "bonjour" in user_message or "salut" in user_message:
+            reply = "👋 Bonjour ! Choisis un domaine: math, info, réseau."
+
+        else:
+reply = "❓ Écris un domaine: math / info / reseau"
+        history.append({
+            "user": user_message,
+            "bot": reply
+        })
+
+        return jsonify({"reply": reply})
+
+    except Exception:
+        return jsonify({"reply": "⚠️ Erreur serveur"})
 
 if __name__ == "__main__":
     app.run(debug=True)
