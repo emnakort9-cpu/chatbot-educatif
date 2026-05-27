@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Chatbot Éducatif</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="chat-container">
+    <h2>🤖 Chatbot Éducatif</h2>
+    <div id="chat-box"></div>
+
+    <input type="text" id="user-input" placeholder="Écris un domaine...">
+    <button onclick="sendMessage()">Envoyer</button>
+</div>
+
+<script>
+function sendMessage() {
+    let input = document.getElementById("user-input");
+    let message = input.value;
+    input.value = "";
+
+    let chatBox = document.getElementById("chat-box");
+    chatBox.innerHTML += `<div class="user">👤 ${message}</div>`;
+
+    fetch("/chat", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({message: message})
+    })
+    .then(res => res.json())
+    .then(data => {
+        chatBox.innerHTML += `<div class="bot">🤖 ${data.reply}</div>`;
+    });
+}
+</script>
+
+</body>
+</html>
