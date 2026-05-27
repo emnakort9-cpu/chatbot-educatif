@@ -48,7 +48,7 @@ def chat():
             reply = "👋 Bonjour ! Choisis un domaine: math, info, réseau."
 
         else:
-reply = "❓ Écris un domaine: math / info / reseau"
+            reply = "❓ Écris un domaine: math / info / reseau"
         history.append({
             "user": user_message,
             "bot": reply
